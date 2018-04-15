@@ -5,6 +5,9 @@ const Storage = require('node-storage');
 // Vapid keys
 const vapid = require('./vapid.json');
 
+// Configure web-push
+webpush.setVapidDetails('mailto:ayush987goyal@gmail.com', vapid.publicKey, vapid.privateKey);
+
 // Subscriptions
 const store = new Storage(`${__dirname}/db`);
 let subscriptions = store.get('subscriptions') || [];
@@ -19,4 +22,11 @@ module.exports.addSubscription = subscription => {
 
   // Persist subscriptions
   store.put('subscriptions', subscriptions);
+};
+
+// Send notification to all registered subscriptions
+module.exports.send = message => {
+  subscriptions.forEach((subscription, i) => {
+    webpush.sendNotification(subscription, message);
+  });
 };

@@ -34,6 +34,10 @@ http
       let body = [];
 
       request.on('data', chunk => body.push(chunk)).on('end', () => {
+        // Send notification with POST body
+        push.send(body.toString());
+
+        // Respond
         response.end('Push Sent');
       });
 
