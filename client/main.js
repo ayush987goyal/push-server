@@ -1,6 +1,9 @@
 // Service Worker Registration
 let swReg;
 
+// Push server URL
+const serverUrl = 'http://localhost:3333';
+
 // Update UI for subscribed state
 const setSubscribedStatus = state => {
   if (state) {
@@ -26,6 +29,23 @@ if (navigator.serviceWorker) {
     .catch(console.error);
 }
 
-fetch('http://localhost:3333/subscribe', { method: 'POST' })
-  .then(res => res.text())
-  .then(console.log);
+// Get public key from server
+const getApplicationServerKey = () => {
+  return (
+    fetch(`${serverUrl}/key`)
+      // Parse response body as arrayBuffer
+      .then(res => res.arrayBuffer())
+      // return arrayBuffer as new Uint8Array
+      .then(key => new Uint8Array(key))
+  );
+};
+
+// Subscribe for push notifications
+const subscribe = () => {
+  // Check registration is availabel
+  if (!swReg) return console.error('SW Registration Not Found');
+
+  getApplicationServerKey().then(key => {
+    swReg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+  });
+};

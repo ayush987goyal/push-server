@@ -5,9 +5,17 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/",
+    "vapid": "web-push generate-vapid-keys --json > server/vapid.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["pwa", "push-server"],
+  "keywords": [
+    "pwa",
+    "push-server"
+  ],
   "author": "Ayush Goyal",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "urlsafe-base64": "^1.0.0",
+    "web-push": "^3.3.0"
+  }
 }
