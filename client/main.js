@@ -25,3 +25,7 @@ if (navigator.serviceWorker) {
     })
     .catch(console.error);
 }
+
+fetch('http://localhost:3333')
+  .then(res => res.text())
+  .then(console.log);
