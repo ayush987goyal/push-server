@@ -40,12 +40,31 @@ const getApplicationServerKey = () => {
   );
 };
 
+// Unsubscribe from push service
+const unsubscribe = () => {
+  // Unsubscribe and update UI
+  swReg.pushManager.getSubscription().then(subscription => {
+    subscription.unsubscribe().then(() => {
+      setSubscribedStatus(false);
+    });
+  });
+};
+
 // Subscribe for push notifications
 const subscribe = () => {
   // Check registration is availabel
   if (!swReg) return console.error('SW Registration Not Found');
 
-  getApplicationServerKey().then(key => {
-    swReg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+  getApplicationServerKey().then(applicationServerKey => {
+    swReg.pushManager
+      .subscribe({ userVisibleOnly: true, applicationServerKey })
+      .then(res => res.toJSON())
+      .then(subscription => {
+        // Pass subscription to server
+        fetch(`${serverUrl}/subscribe`, { method: 'POST', body: JSON.stringify(subscription) })
+          .then(setSubscribedStatus)
+          .catch(unsubscribe);
+      })
+      .catch(console.error);
   });
 };
