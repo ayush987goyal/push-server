@@ -1,0 +1,15 @@
+{
+  "name": "push-server-project",
+  "version": "1.0.0",
+  "description": "Web Push Server",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pwa",
+    "push-server"
+  ],
+  "author": "Ayush Goyal",
+  "license": "ISC"
+}
