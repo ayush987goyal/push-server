@@ -26,7 +26,28 @@ module.exports.addSubscription = subscription => {
 
 // Send notification to all registered subscriptions
 module.exports.send = message => {
+  // Notification promises
+  let notifications = [];
+
+  // Loop subscriptions
   subscriptions.forEach((subscription, i) => {
-    webpush.sendNotification(subscription, message);
+    let p = webpush.sendNotification(subscription, message).catch(status => {
+      // Check for '410 - Gone' status and mark for deletion
+      if (status.statusCode === 410) subscriptions[i]['delete'] = true;
+
+      // return any value
+      return null;
+    });
+
+    // Push notifications promise to array
+    notifications.push(p);
+  });
+
+  // clean subscriptions marked for deletion
+  Promise.all(notifications).then(() => {
+    subscriptions = subscriptions.filter(subscription => !subscription.delete);
+
+    // Persist cleaned subscriptions
+    store.put('subscriptions', subscriptions);
   });
 };
